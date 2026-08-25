@@ -1,0 +1,19 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Elgato Key Light MK.2 (local)",
+        "description": "Enter the IP address of your Elgato Key Light Air/MK.2.",
+        "data": {
+          "host": "IP address"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not connect to the light over mutual TLS. Check the IP and that the bundled certificate is present."
+    },
+    "abort": {
+      "already_configured": "This light is already configured."
+    }
+  }
+}

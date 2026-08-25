@@ -1,0 +1,14 @@
+# never commit certificates / keys
+*.pem
+*.key
+*.crt
+*.cer
+*.pfx
+*.p12
+certs/client-chain.pem
+certs/client.key
+
+# python
+__pycache__/
+*.pyc
+.venv/
