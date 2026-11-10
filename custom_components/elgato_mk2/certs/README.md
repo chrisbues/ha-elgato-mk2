@@ -54,12 +54,23 @@ Prerequisites: the **Xcode Command Line Tools** (`xcode-select --install`) provi
    ```
    sudo lldb -p <PID> -o "process save-core /tmp/cc.core" -o "detach" -o "quit"
    ```
-   If System Integrity Protection blocks attaching to the signed app, relaunch Control Center under
-   the debugger instead:
+   If attaching fails, relaunch Control Center under the debugger instead. Pass the binary as
+   `lldb`'s own target argument (after `--`) so a target exists before `process launch` runs — putting
+   the path inside the `process launch` command gives `error: invalid target`:
    ```
-   sudo lldb -o "process launch --stop-at-entry -- /Applications/Elgato Control Center.app/Contents/MacOS/Control Center"
+   sudo lldb "/Applications/Elgato Control Center.app/Contents/MacOS/Control Center"
+   (lldb) process launch --stop-at-entry
+   (lldb) continue
    ```
-   let it connect to the light, then `process save-core /tmp/cc.core`.
+   Let it connect to the light, press **Ctrl-C** to return to the `(lldb)` prompt, then
+   `process save-core /tmp/cc.core`.
+
+   > **Caveat — code signing.** Control Center is shipped with the hardened runtime and without the
+   > `get-task-allow` entitlement, so macOS may refuse the debugger even under `sudo` ("not allowed to
+   > attach to process" / a code-signing error), for both attach and launch. If so, either run the
+   > extraction with SIP disabled (`csrutil disable` from Recovery, re-enable afterwards), or re-sign
+   > a copy of the app with `get-task-allow`. Try `process save-core` on the already-running PID first
+   > (above) — it's the least likely to trip the signing check.
 4. Carve the certs and key out of the dump. The server-leaf **cert + EC private key** are present as
    PEM, and the intermediate/root CAs are DER (see `docs/PROTOCOL.md` for the approach). A quick way
    to pull the PEM blocks:
